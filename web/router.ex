@@ -17,6 +17,8 @@ defmodule Whiteboard.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    resources "/standups", StandupController
+    resources "/items", ItemController
   end
 
   # Other scopes may use custom stacks.

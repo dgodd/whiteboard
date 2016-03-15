@@ -1,0 +1,33 @@
+<h2>Show item</h2>
+
+<ul>
+
+  <li>
+    <strong>Title:</strong>
+    <%= @item.title %>
+  </li>
+
+  <li>
+    <strong>Author:</strong>
+    <%= @item.author %>
+  </li>
+
+  <li>
+    <strong>Date:</strong>
+    <%= @item.date %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @item.description %>
+  </li>
+
+  <li>
+    <strong>Standup:</strong>
+    <%= @item.standup_id %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: item_path(@conn, :edit, @item) %>
+<%= link "Back", to: item_path(@conn, :index) %>
