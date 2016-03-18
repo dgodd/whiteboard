@@ -3,6 +3,7 @@
 <table class="table">
   <thead>
     <tr>
+      <th>Kind</th>
       <th>Title</th>
       <th>Author</th>
       <th>Date</th>
@@ -15,11 +16,12 @@
   <tbody>
 <%= for item <- @items do %>
     <tr>
+      <td><%= item.kind %></td>
       <td><%= item.title %></td>
       <td><%= item.author %></td>
       <td><%= item.date %></td>
       <td><%= item.description %></td>
-      <td><%= item.standup_id %></td>
+      <td><%= item.standup %></td>
 
       <td class="text-right">
         <%= link "Show", to: item_path(@conn, :show, item), class: "btn btn-default btn-xs" %>

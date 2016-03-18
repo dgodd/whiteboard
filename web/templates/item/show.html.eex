@@ -3,6 +3,16 @@
 <ul>
 
   <li>
+    <strong>Standup:</strong>
+    <%= @item.standup %>
+  </li>
+  
+  <li>
+    <strong>Kind:</strong>
+    <%= @item.kind %>
+  </li>
+
+  <li>
     <strong>Title:</strong>
     <%= @item.title %>
   </li>
@@ -20,11 +30,6 @@
   <li>
     <strong>Description:</strong>
     <%= @item.description %>
-  </li>
-
-  <li>
-    <strong>Standup:</strong>
-    <%= @item.standup_id %>
   </li>
 
 </ul>

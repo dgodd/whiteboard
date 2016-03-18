@@ -1,18 +1,13 @@
-defmodule Whiteboard.Item do
+defmodule Whiteboard.Kind do
   use Whiteboard.Web, :model
 
-  schema "items" do
-    field :title, :string
-    field :author, :string
-    field :date, Ecto.Date
-    field :description, :string
-    belongs_to :standup, Whiteboard.Standup
-    belongs_to :kind, Whiteboard.Kind
+  schema "kinds" do
+    field :name, :string
 
     timestamps
   end
 
-  @required_fields ~w(standup_id kind_id title author date description)
+  @required_fields ~w(name)
   @optional_fields ~w()
 
   @doc """
