@@ -22,9 +22,9 @@
       <td><%= item.description %></td>
 
       <td class="text-right">
-        <%= link "Show", to: standup_item_path(@conn, :show, 1, item), class: "btn btn-default btn-xs" %>
-        <%= link "Edit", to: standup_item_path(@conn, :edit, 1, item), class: "btn btn-default btn-xs" %>
-        <%= link "Delete", to: standup_item_path(@conn, :delete, 1, item), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+        <%= link "Show", to: standup_item_path(@conn, :show, @standup.id, item), class: "btn btn-default btn-xs" %>
+        <%= link "Edit", to: standup_item_path(@conn, :edit, @standup.id, item), class: "btn btn-default btn-xs" %>
+        <%= link "Delete", to: standup_item_path(@conn, :delete, @standup.id, item), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
       </td>
     </tr>
 <% end %>

@@ -5,27 +5,23 @@ defmodule Whiteboard.ItemController do
   alias Whiteboard.Kind
 
   plug :scrub_params, "item" when action in [:create, :update]
+  plug :find_standup
+  plug :find_kinds
 
   def index(conn, %{"standup_id"=>standup_id}) do
-    standup = Repo.get!(Whiteboard.Standup, standup_id)
     items = Repo.all from(k in Item, order_by: k.id, where: k.standup_id == ^standup_id)
     items = Repo.preload items, [:kind]
 
-    render(conn, "index.html", standup: standup, items: items)
+    render(conn, "index.html", items: items)
   end
 
-  def new(conn, %{"standup_id"=>standup_id}) do
-    standup = Repo.get!(Whiteboard.Standup, standup_id)
-    kinds = Repo.all from(k in Kind, order_by: k.id, select: {k.name, k.id})
-
+  def new(conn, _) do
     changeset = Item.changeset(%Item{})
-    render(conn, "new.html", standup: standup, kinds: kinds, changeset: changeset)
+    render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"item" => item_params, "standup_id"=>standup_id}) do
-    standup = Repo.get!(Whiteboard.Standup, standup_id)
-    kinds = Repo.all from(k in Kind, order_by: k.id, select: {k.name, k.id})
-    changeset = Item.changeset(%Item{standup_id: standup.id}, item_params)
+    changeset = Item.changeset(%Item{standup_id: conn.assigns[:standup].id}, item_params)
 
     case Repo.insert(changeset) do
       {:ok, _item} ->
@@ -33,7 +29,7 @@ defmodule Whiteboard.ItemController do
         |> put_flash(:info, "Item created successfully.")
         |> redirect(to: standup_item_path(conn, :index, standup_id))
       {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset, kinds: kinds, standup: standup)
+        render(conn, "new.html", changeset: changeset)
     end
   end
 
@@ -46,24 +42,22 @@ defmodule Whiteboard.ItemController do
 
   def edit(conn, %{"id" => id}) do
     item = Repo.get!(Item, id)
-    kinds = Repo.all from(k in Kind, order_by: k.id, select: {k.name, k.id})
 
     changeset = Item.changeset(item)
-    render(conn, "edit.html", item: item, kinds: kinds, changeset: changeset)
+    render(conn, "edit.html", item: item, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "item" => item_params}) do
     item = Repo.get!(Item, id)
-    kinds = Repo.all from(k in Kind, order_by: k.id, select: {k.name, k.id})
     changeset = Item.changeset(item, item_params)
 
     case Repo.update(changeset) do
       {:ok, item} ->
         conn
         |> put_flash(:info, "Item updated successfully.")
-        |> redirect(to: standup_item_path(conn, :show, 1, item))
+        |> redirect(to: standup_item_path(conn, :show, conn.params["standup_id"], item))
       {:error, changeset} ->
-        render(conn, "edit.html", item: item, kinds: kinds, changeset: changeset)
+        render(conn, "edit.html", item: item, changeset: changeset)
     end
   end
 
@@ -76,6 +70,17 @@ defmodule Whiteboard.ItemController do
 
     conn
     |> put_flash(:info, "Item deleted successfully.")
-    |> redirect(to: standup_item_path(conn, :index, 1))
+    |> redirect(to: standup_item_path(conn, :index, conn.params["standup_id"]))
   end
+  
+   defp find_standup(conn, _) do
+    standup = Repo.get!(Whiteboard.Standup, conn.params["standup_id"])
+    assign(conn, :standup, standup)
+  end
+  
+  defp find_kinds(conn, _) do
+    kinds = Repo.all from(k in Kind, order_by: k.id, select: {k.name, k.id})
+    assign(conn, :kinds, kinds)
+  end
+
 end
