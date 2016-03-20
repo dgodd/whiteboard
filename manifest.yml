@@ -1,0 +1,5 @@
+---
+applications:
+- name: elixir-whiteboard
+  buildpack: https://github.com/gogolok/cloudfoundry-buildpack-elixir
+  command: mix phoenix.server
