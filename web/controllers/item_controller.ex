@@ -6,30 +6,34 @@ defmodule Whiteboard.ItemController do
 
   plug :scrub_params, "item" when action in [:create, :update]
 
-  def index(conn, _params) do
-    items = Repo.all(Item)
-    items = Repo.preload items, [:standup, :kind]
+  def index(conn, %{"standup_id"=>standup_id}) do
+    standup = Repo.get!(Whiteboard.Standup, standup_id)
+    items = Repo.all from(k in Item, order_by: k.id, where: k.standup_id == ^standup_id)
+    items = Repo.preload items, [:kind]
 
-    render(conn, "index.html", items: items)
+    render(conn, "index.html", standup: standup, items: items)
   end
 
-  def new(conn, _params) do
+  def new(conn, %{"standup_id"=>standup_id}) do
+    standup = Repo.get!(Whiteboard.Standup, standup_id)
     kinds = Repo.all from(k in Kind, order_by: k.id, select: {k.name, k.id})
 
     changeset = Item.changeset(%Item{})
-    render(conn, "new.html", kinds: kinds, changeset: changeset)
+    render(conn, "new.html", standup: standup, kinds: kinds, changeset: changeset)
   end
 
-  def create(conn, %{"item" => item_params}) do
-    changeset = Item.changeset(%Item{}, item_params)
+  def create(conn, %{"item" => item_params, "standup_id"=>standup_id}) do
+    standup = Repo.get!(Whiteboard.Standup, standup_id)
+    kinds = Repo.all from(k in Kind, order_by: k.id, select: {k.name, k.id})
+    changeset = Item.changeset(%Item{standup_id: standup.id}, item_params)
 
     case Repo.insert(changeset) do
       {:ok, _item} ->
         conn
         |> put_flash(:info, "Item created successfully.")
-        |> redirect(to: item_path(conn, :index))
+        |> redirect(to: standup_item_path(conn, :index, standup_id))
       {:error, changeset} ->
-        render(conn, "new.html", changeset: changeset)
+        render(conn, "new.html", changeset: changeset, kinds: kinds, standup: standup)
     end
   end
 
@@ -57,7 +61,7 @@ defmodule Whiteboard.ItemController do
       {:ok, item} ->
         conn
         |> put_flash(:info, "Item updated successfully.")
-        |> redirect(to: item_path(conn, :show, item))
+        |> redirect(to: standup_item_path(conn, :show, 1, item))
       {:error, changeset} ->
         render(conn, "edit.html", item: item, kinds: kinds, changeset: changeset)
     end
@@ -72,6 +76,6 @@ defmodule Whiteboard.ItemController do
 
     conn
     |> put_flash(:info, "Item deleted successfully.")
-    |> redirect(to: item_path(conn, :index))
+    |> redirect(to: standup_item_path(conn, :index, 1))
   end
 end

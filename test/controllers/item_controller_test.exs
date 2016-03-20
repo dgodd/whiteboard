@@ -6,61 +6,61 @@ defmodule Whiteboard.ItemControllerTest do
   @invalid_attrs %{}
 
   test "lists all entries on index", %{conn: conn} do
-    conn = get conn, item_path(conn, :index)
+    conn = get conn, standup_item_path(conn, :index, 1)
     assert html_response(conn, 200) =~ "Listing items"
   end
 
   test "renders form for new resources", %{conn: conn} do
-    conn = get conn, item_path(conn, :new)
+    conn = get conn, standup_item_path(conn, :new, 1)
     assert html_response(conn, 200) =~ "New item"
   end
 
   test "creates resource and redirects when data is valid", %{conn: conn} do
-    conn = post conn, item_path(conn, :create), item: @valid_attrs
-    assert redirected_to(conn) == item_path(conn, :index)
+    conn = post conn, standup_item_path(conn, :create, 1), item: @valid_attrs
+    assert redirected_to(conn) == standup_item_path(conn, :index, 1)
     assert Repo.get_by(Item, @valid_attrs)
   end
 
   test "does not create resource and renders errors when data is invalid", %{conn: conn} do
-    conn = post conn, item_path(conn, :create), item: @invalid_attrs
+    conn = post conn, standup_item_path(conn, :create, 1), item: @invalid_attrs, standup: %{}, kinds: []
     assert html_response(conn, 200) =~ "New item"
   end
 
   test "shows chosen resource", %{conn: conn} do
     item = Repo.insert! %Item{}
-    conn = get conn, item_path(conn, :show, item)
+    conn = get conn, standup_item_path(conn, :show, 1, item)
     assert html_response(conn, 200) =~ "Show item"
   end
 
   test "renders page not found when id is nonexistent", %{conn: conn} do
     assert_error_sent 404, fn ->
-      get conn, item_path(conn, :show, -1)
+      get conn, standup_item_path(conn, :show, 1, -1)
     end
   end
 
   test "renders form for editing chosen resource", %{conn: conn} do
     item = Repo.insert! %Item{}
-    conn = get conn, item_path(conn, :edit, item)
+    conn = get conn, standup_item_path(conn, :edit, 1, item)
     assert html_response(conn, 200) =~ "Edit item"
   end
 
   test "updates chosen resource and redirects when data is valid", %{conn: conn} do
     item = Repo.insert! %Item{}
-    conn = put conn, item_path(conn, :update, item), item: @valid_attrs
-    assert redirected_to(conn) == item_path(conn, :show, item)
+    conn = put conn, standup_item_path(conn, :update, 1, item), item: @valid_attrs
+    assert redirected_to(conn) == standup_item_path(conn, :show, 1, item)
     assert Repo.get_by(Item, @valid_attrs)
   end
 
   test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
     item = Repo.insert! %Item{}
-    conn = put conn, item_path(conn, :update, item), item: @invalid_attrs
+    conn = put conn, standup_item_path(conn, :update, 1, item), item: @invalid_attrs
     assert html_response(conn, 200) =~ "Edit item"
   end
 
   test "deletes chosen resource", %{conn: conn} do
     item = Repo.insert! %Item{}
-    conn = delete conn, item_path(conn, :delete, item)
-    assert redirected_to(conn) == item_path(conn, :index)
+    conn = delete conn, standup_item_path(conn, :delete, 1, item)
+    assert redirected_to(conn) == standup_item_path(conn, :index, 1)
     refute Repo.get(Item, item.id)
   end
 end

@@ -3,7 +3,7 @@ defmodule Whiteboard.ItemTest do
 
   alias Whiteboard.Item
 
-  @valid_attrs %{author: "some content", date: "2010-04-17", description: "some content", title: "some content"}
+  @valid_attrs %{standup_id: 1, kind_id: 1, author: "some content", date: "2010-04-17", description: "some content", title: "some content"}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
