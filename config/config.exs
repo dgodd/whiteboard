@@ -27,3 +27,6 @@ import_config "#{Mix.env}.exs"
 config :phoenix, :generators,
   migration: true,
   binary_id: false
+
+# Use Chrome with the default driver (selenium)
+config :hound, browser: "chrome"

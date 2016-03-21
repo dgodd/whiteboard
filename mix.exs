@@ -15,12 +15,20 @@ defmodule Whiteboard.Mixfile do
 
   # Configuration for the OTP application.
   #
-  # Type `mix help compile.app` for more information.
+  # Type `mix help compile.app` for more information.  
   def application do
     [mod: {Whiteboard, []},
-     applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex]]
+    applications: app_list(Mix.env) ]
   end
+
+    def app_list do
+    [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
+                        :phoenix_ecto, :postgrex]
+    end
+
+    def app_list(:test), do: [:hound | app_list]
+    def app_list(_),     do: app_list
+  
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
@@ -36,6 +44,7 @@ defmodule Whiteboard.Mixfile do
      {:phoenix_html, "~> 2.4"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.9"},
+     {:hound, "~> 0.7", only: :test},
      {:cowboy, "~> 1.0"}]
   end
 
