@@ -28,5 +28,5 @@ config :phoenix, :generators,
   migration: true,
   binary_id: false
 
-# Use Chrome with the default driver (selenium)
-config :hound, browser: "chrome"
+# Start Hound for ChromeDriver (default port 9515 assumed)
+config :hound, driver: "chrome_driver"
